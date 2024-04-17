@@ -70,6 +70,7 @@ from secretflow.spec.v1.component_pb2 import CompListDef, ComponentDef
 from secretflow.spec.v1.data_pb2 import StorageConfig
 from secretflow.spec.v1.evaluation_pb2 import NodeEvalParam, NodeEvalResult
 from secretflow.version import build_message
+from secretflow.component.preprocessing.data_prep.psi_3 import psi_3pc_comp
 
 ALL_COMPONENTS = [
     train_test_split_comp,
