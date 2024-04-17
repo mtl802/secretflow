@@ -37,7 +37,6 @@ from secretflow.component.preprocessing.binning.vert_binning import (
 from secretflow.component.preprocessing.binning.vert_woe_binning import (
     vert_woe_binning_comp,
 )
-from secretflow.component.preprocessing.data_prep.psi import psi_comp
 from secretflow.component.preprocessing.data_prep.train_test_split import (
     train_test_split_comp,
 )
