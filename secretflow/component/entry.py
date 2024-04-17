@@ -74,6 +74,7 @@ from secretflow.version import build_message
 ALL_COMPONENTS = [
     train_test_split_comp,
     psi_comp,
+    psi_3pc_comp,
     ss_sgd_train_comp,
     ss_sgd_predict_comp,
     feature_filter_comp,

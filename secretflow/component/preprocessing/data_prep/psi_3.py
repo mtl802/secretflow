@@ -32,29 +32,28 @@ from secretflow.component.data_utils import (
 )
 from secretflow.device.device.pyu import PYU
 from secretflow.device.device.spu import SPU
-from secretflow.spec.v1.data_pb2 import (
+from secretflow.protos.component.data_pb2 import (
     DistData,
     IndividualTable,
     VerticalTable,
 )
 
-input_io_absent_enable = True
-psi_10pc_comp = Component(
-    "psi_10pc",
+psi_3pc_comp = Component(
+    "psi_3pc",
     domain="preprocessing",
     version="0.0.1",
-    desc="PSI among multiple parties.",
-    input_io_absent_enable=input_io_absent_enable,
+    desc="PSI among three parties.",
 )
-psi_10pc_comp.str_attr(
+psi_3pc_comp.str_attr(
     name="protocol",
     desc="PSI protocol.",
     is_list=False,
     is_optional=True,
-    default_value="ECDH_PSI_NPC",
-    allowed_values=["ECDH_PSI_NPC"],
+    default_value="ECDH_PSI_3PC",
+    allowed_values=["ECDH_PSI_3PC", "ECDH_PSI_NPC", "KKRT16_PSI",
+                    "ERROR"],
 )
-psi_10pc_comp.int_attr(
+psi_3pc_comp.int_attr(
     name="bucket_size",
     desc="Specify the hash bucket size used in PSI. Larger values consume more memory.",
     is_list=False,
@@ -63,7 +62,7 @@ psi_10pc_comp.int_attr(
     lower_bound=0,
     lower_bound_inclusive=False,
 )
-psi_10pc_comp.str_attr(
+psi_3pc_comp.str_attr(
     name="ecdh_curve_type",
     desc="Curve type for ECDH PSI.",
     is_list=False,
@@ -71,11 +70,10 @@ psi_10pc_comp.str_attr(
     default_value="CURVE_FOURQ",
     allowed_values=["CURVE_25519", "CURVE_FOURQ", "CURVE_SM2", "CURVE_SECP256K1"],
 )
-
-psi_10pc_comp.io(
+psi_3pc_comp.io(
     io_type=IoType.INPUT,
-    name="input_0",
-    desc="Input sample individual table(0)",
+    name="input_a",
+    desc="Input sample individual table(a)",
     types=[DistDataType.INDIVIDUAL_TABLE],
     col_params=[
         TableColParam(
@@ -84,10 +82,10 @@ psi_10pc_comp.io(
         )
     ],
 )
-psi_10pc_comp.io(
+psi_3pc_comp.io(
     io_type=IoType.INPUT,
-    name="input_1",
-    desc="Input sample individual table(1)",
+    name="input_b",
+    desc="Input sample individual table(b)",
     types=[DistDataType.INDIVIDUAL_TABLE],
     col_params=[
         TableColParam(
@@ -96,10 +94,10 @@ psi_10pc_comp.io(
         )
     ],
 )
-psi_10pc_comp.io(
+psi_3pc_comp.io(
     io_type=IoType.INPUT,
-    name="input_2",
-    desc="Input sample individual table(2)",
+    name="input_c",
+    desc="Input sample individual table(c)",
     types=[DistDataType.INDIVIDUAL_TABLE],
     col_params=[
         TableColParam(
@@ -108,91 +106,7 @@ psi_10pc_comp.io(
         )
     ],
 )
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_3",
-    desc="Input sample individual table(3)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_4",
-    desc="Input sample individual table(4)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_5",
-    desc="Input sample individual table(5)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_6",
-    desc="Input sample individual table(6)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_7",
-    desc="Input sample individual table(7)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_8",
-    desc="Input sample individual table(8)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
-    io_type=IoType.INPUT,
-    name="input_9",
-    desc="Input sample individual table(9)",
-    types=[DistDataType.INDIVIDUAL_TABLE],
-    col_params=[
-        TableColParam(
-            name="key",
-            desc="Column(s) used to join. If not provided, ids of the dataset will be used.",
-        )
-    ],
-)
-psi_10pc_comp.io(
+psi_3pc_comp.io(
     io_type=IoType.OUTPUT,
     name="psi_output",
     desc="Output vertical table",
@@ -244,44 +158,30 @@ def modify_schema(x: DistData, keys: List[str]) -> DistData:
     return new_x
 
 
-@psi_10pc_comp.eval_fn
-def multi_party_balanced_psi_eval_fn(
+@psi_3pc_comp.eval_fn
+def three_party_balanced_psi_eval_fn(
         *,
         ctx,
         protocol,
         bucket_size,
         ecdh_curve_type,
-        input_0,
-        input_0_key,
-        input_1,
-        input_1_key,
-        input_2,
-        input_2_key,
-        input_3,
-        input_3_key,
-        input_4,
-        input_4_key,
-        input_5,
-        input_5_key,
-        input_6,
-        input_6_key,
-        input_7,
-        input_7_key,
-        input_8,
-        input_8_key,
-        input_9,
-        input_9_key,
+        input_a,
+        input_a_key,
+        input_b,
+        input_b_key,
+        input_c,
+        input_c_key,
         psi_output,
 ):
-    input_data_array = [input_0, input_1, input_2, input_3, input_4, input_5, input_6, input_7, input_8, input_9]
-    input_key_array = [input_0_key, input_1_key, input_2_key, input_3_key, input_4_key, input_5_key, input_6_key,
-                       input_7_key, input_8_key, input_9_key]
+    input_data_array = [input_a, input_b, input_c]
+    input_key_array = [input_a_key, input_b_key, input_c_key]
 
-    input_0_path_format = extract_distdata_info(input_0)
-    assert len(input_0_path_format) == 1
-    input_0_party = list(input_0_path_format.keys())[0]
+    input_a_path_format = extract_distdata_info(input_a)
+    assert len(input_a_path_format) == 1
+    input_a_party = list(input_a_path_format.keys())[0]
 
-    # only local fs is supported at this moment.
+    # only local fs is supporte
+    # d at this moment.
     local_fs_wd = ctx.local_fs_wd
 
     if ctx.spu_configs is None or len(ctx.spu_configs) == 0:
@@ -312,7 +212,7 @@ def multi_party_balanced_psi_eval_fn(
             key=key,
             input_path=input_path,
             output_path=output_path,
-            receiver=input_0_party,
+            receiver=input_a_party,
             sort=False,
             protocol=protocol,
             bucket_size=bucket_size,
@@ -322,8 +222,8 @@ def multi_party_balanced_psi_eval_fn(
     output_db = DistData(
         name=psi_output,
         type=str(DistDataType.VERTICAL_TABLE),
-        sys_info=input_0.sys_info,
-        data_refs=data_refs,
+        sys_info=input_a.sys_info,
+        data_refs=data_refs
     )
 
     output_db = merge_individuals_to_vtable(
@@ -352,7 +252,7 @@ def input_params_process(input_data_arr, input_key_arr, local_fs_wd, psi_output)
             input_party = list(input_path_format.keys())[0]
             input_pyu = PYU(input_party)
             parties.append(input_party)
-            # If input_key is not provided, try to get input_key from ids of input_3ata.
+            # If input_key is not provided, try to get input_key from ids of input_data.
             if len(key) == 0:
                 key = list(extract_table_header(data, load_ids=True)[input_party].keys())
             keys[input_pyu] = key
