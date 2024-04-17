@@ -32,11 +32,7 @@ from secretflow.component.data_utils import (
 )
 from secretflow.device.device.pyu import PYU
 from secretflow.device.device.spu import SPU
-from secretflow.protos.component.data_pb2 import (
-    DistData,
-    IndividualTable,
-    VerticalTable,
-)
+from secretflow.spec.v1.data_pb2 import DistData, IndividualTable, VerticalTable
 
 psi_3pc_comp = Component(
     "psi_3pc",
@@ -50,8 +46,7 @@ psi_3pc_comp.str_attr(
     is_list=False,
     is_optional=True,
     default_value="ECDH_PSI_3PC",
-    allowed_values=["ECDH_PSI_3PC", "ECDH_PSI_NPC", "KKRT16_PSI",
-                    "ERROR"],
+    allowed_values=["ECDH_PSI_3PC", "ECDH_PSI_NPC", "KKRT16_PSI"],
 )
 psi_3pc_comp.int_attr(
     name="bucket_size",
