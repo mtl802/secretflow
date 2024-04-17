@@ -34,13 +34,13 @@ from secretflow.device.device.pyu import PYU
 from secretflow.device.device.spu import SPU
 from secretflow.spec.v1.data_pb2 import DistData, IndividualTable, VerticalTable
 
-psi_3pc_comp = Component(
+psi_3_comp = Component(
     "psi_3pc",
     domain="preprocessing",
     version="0.0.1",
     desc="PSI among three parties.",
 )
-psi_3pc_comp.str_attr(
+psi_3_comp.str_attr(
     name="protocol",
     desc="PSI protocol.",
     is_list=False,
@@ -48,7 +48,7 @@ psi_3pc_comp.str_attr(
     default_value="ECDH_PSI_3PC",
     allowed_values=["ECDH_PSI_3PC", "ECDH_PSI_NPC", "KKRT16_PSI"],
 )
-psi_3pc_comp.int_attr(
+psi_3_comp.int_attr(
     name="bucket_size",
     desc="Specify the hash bucket size used in PSI. Larger values consume more memory.",
     is_list=False,
@@ -57,7 +57,7 @@ psi_3pc_comp.int_attr(
     lower_bound=0,
     lower_bound_inclusive=False,
 )
-psi_3pc_comp.str_attr(
+psi_3_comp.str_attr(
     name="ecdh_curve_type",
     desc="Curve type for ECDH PSI.",
     is_list=False,
@@ -65,7 +65,7 @@ psi_3pc_comp.str_attr(
     default_value="CURVE_FOURQ",
     allowed_values=["CURVE_25519", "CURVE_FOURQ", "CURVE_SM2", "CURVE_SECP256K1"],
 )
-psi_3pc_comp.io(
+psi_3_comp.io(
     io_type=IoType.INPUT,
     name="input_a",
     desc="Input sample individual table(a)",
@@ -77,7 +77,7 @@ psi_3pc_comp.io(
         )
     ],
 )
-psi_3pc_comp.io(
+psi_3_comp.io(
     io_type=IoType.INPUT,
     name="input_b",
     desc="Input sample individual table(b)",
@@ -89,7 +89,7 @@ psi_3pc_comp.io(
         )
     ],
 )
-psi_3pc_comp.io(
+psi_3_comp.io(
     io_type=IoType.INPUT,
     name="input_c",
     desc="Input sample individual table(c)",
@@ -101,7 +101,7 @@ psi_3pc_comp.io(
         )
     ],
 )
-psi_3pc_comp.io(
+psi_3_comp.io(
     io_type=IoType.OUTPUT,
     name="psi_output",
     desc="Output vertical table",
@@ -153,7 +153,7 @@ def modify_schema(x: DistData, keys: List[str]) -> DistData:
     return new_x
 
 
-@psi_3pc_comp.eval_fn
+@psi_3_comp.eval_fn
 def three_party_balanced_psi_eval_fn(
         *,
         ctx,

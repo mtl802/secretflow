@@ -70,12 +70,12 @@ from secretflow.spec.v1.data_pb2 import StorageConfig
 from secretflow.spec.v1.evaluation_pb2 import NodeEvalParam, NodeEvalResult
 from secretflow.version import build_message
 from secretflow.component.preprocessing.data_prep.psi import psi_comp
-from secretflow.component.preprocessing.data_prep.psi_3 import psi_3pc_comp
+from secretflow.component.preprocessing.data_prep.psi_3 import psi_3_comp
 
 ALL_COMPONENTS = [
     train_test_split_comp,
     psi_comp,
-    psi_3pc_comp,
+    psi_3_comp,
     ss_sgd_train_comp,
     ss_sgd_predict_comp,
     feature_filter_comp,
